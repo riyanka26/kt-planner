@@ -1,0 +1,11 @@
+# KT Planner Requirements
+# This project uses only Python standard library
+# Python 3.7 or higher required
+
+# No external dependencies needed!
+# All functionality is built using:
+# - json (for data storage)
+# - datetime (for date/time handling)
+# - argparse (for CLI)
+# - typing (for type hints)
+# - enum (for enumerations)
