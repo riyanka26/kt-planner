@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KT Planner - Knowledge Transfer Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1em;
+            font-weight: 500;
+            color: #495057;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .sessions-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .session-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .session-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .session-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .session-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .status-planned {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-in-progress {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .status-completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .session-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .session-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+        }
+
+        .close-btn {
+            font-size: 2em;
+            cursor: pointer;
+            color: #6c757d;
+            background: none;
+            border: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .topics-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .topic-tag {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .participants-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .participant-tag {
+            background: #28a745;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-tab {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 KT Planner</h1>
+            <p>Comprehensive Knowledge Transfer Management System</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('sessions')">📝 Sessions</button>
+            <button class="nav-tab" onclick="switchTab('create')">➕ Create Session</button>
+            <button class="nav-tab" onclick="switchTab('schedule')">📅 Auto Schedule</button>
+            <button class="nav-tab" onclick="switchTab('reminders')">🔔 Reminders</button>
+            <button class="nav-tab" onclick="switchTab('ai')">🤖 AI Tools</button>
+        </div>
+
+        <div class="content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <h2 style="margin-bottom: 20px;">Dashboard Overview</h2>
+                <div id="stats-container" class="stats-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading statistics...</p>
+                    </div>
+                </div>
+                <div id="progress-summary"></div>
+            </div>
+
+            <!-- Sessions Tab -->
+            <div id="sessions" class="tab-content">
+                <h2 style="margin-bottom: 20px;">All KT Sessions</h2>
+                <div id="sessions-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading sessions...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Session Tab -->
+            <div id="create" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Create New KT Session</h2>
+                <div id="create-alert"></div>
+                <form id="create-session-form">
+                    <div class="form-group">
+                        <label for="title">Session Title *</label>
+                        <input type="text" id="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="trainer">Trainer *</label>
+                            <input type="text" id="trainer" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="trainee">Trainee</label>
+                            <input type="text" id="trainee">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="scheduled_date">Scheduled Date & Time *</label>
+                            <input type="datetime-local" id="scheduled_date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration_hours">Duration (hours) *</label>
+                            <input type="number" id="duration_hours" step="0.5" min="0.5" value="2" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="priority">Priority</label>
+                            <select id="priority">
+                                <option value="Low">Low</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High">High</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="time_preference">Time Preference</label>
+                            <input type="text" id="time_preference" placeholder="e.g., 3 PM - 5 PM">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="topics">Topics (comma-separated) *</label>
+                        <input type="text" id="topics" placeholder="Topic 1, Topic 2, Topic 3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="participants">Participants (comma-separated)</label>
+                        <input type="text" id="participants" placeholder="John, Jane, Bob">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create Session</button>
+                    <button type="reset" class="btn btn-secondary">Reset Form</button>
+                </form>
+            </div>
+
+            <!-- Auto Schedule Tab -->
+            <div id="schedule" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Auto Schedule Multiple Sessions</h2>
+                <div id="schedule-alert"></div>
+                <form id="schedule-form">
+                    <div class="form-group">
+                        <label for="schedule_topics">Topics (one per line) *</label>
+                        <textarea id="schedule_topics" rows="6" placeholder="Python Basics&#10;Advanced Python&#10;Django Framework&#10;REST APIs&#10;Testing" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="schedule_trainer">Trainer *</label>
+                            <input type="text" id="schedule_trainer" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="schedule_participants">Participants (comma-separated) *</label>
+                            <input type="text" id="schedule_participants" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="schedule_start_date">Start Date *</label>
+                            <input type="date" id="schedule_start_date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="schedule_end_date">End Date *</label>
+                            <input type="date" id="schedule_end_date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="schedule_duration">Duration per Session (hours) *</label>
+                            <input type="number" id="schedule_duration" step="0.5" min="0.5" value="2" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="schedule_time">Preferred Time</label>
+                            <input type="text" id="schedule_time" placeholder="e.g., 3 PM - 5 PM">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Schedule All Sessions</button>
+                    <button type="reset" class="btn btn-secondary">Reset Form</button>
+                </form>
+            </div>
+
+            <!-- Reminders Tab -->
+            <div id="reminders" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Pending Reminders</h2>
+                <div id="reminders-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading reminders...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Tools Tab -->
+            <div id="ai" class="tab-content">
+                <h2 style="margin-bottom: 20px;">AI-Powered Tools</h2>
+                
+                <div style="margin-bottom: 40px;">
+                    <h3>Topic Breakdown</h3>
+                    <p style="color: #6c757d; margin-bottom: 20px;">Break down a complex topic into subtopics</p>
+                    <div id="breakdown-alert"></div>
+                    <form id="breakdown-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="breakdown_topic">Topic *</label>
+                                <input type="text" id="breakdown_topic" placeholder="e.g., Machine Learning" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="breakdown_count">Number of Subtopics</label>
+                                <input type="number" id="breakdown_count" min="2" max="8" value="5">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate Subtopics</button>
+                    </form>
+                    <div id="breakdown-result" style="margin-top: 20px;"></div>
+                </div>
+
+                <div>
+                    <h3>Generate Session Agenda</h3>
+                    <p style="color: #6c757d; margin-bottom: 20px;">Generate a detailed agenda for a session</p>
+                    <div id="agenda-alert"></div>
+                    <form id="agenda-form">
+                        <div class="form-group">
+                            <label for="agenda_session">Select Session *</label>
+                            <select id="agenda_session" required>
+                                <option value="">-- Select a session --</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate Agenda</button>
+                    </form>
+                    <div id="agenda-result" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Details Modal -->
+    <div id="session-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Session Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data when switching to certain tabs
+            if (tabName === 'dashboard') {
+                loadDashboard();
+            } else if (tabName === 'sessions') {
+                loadSessions();
+            } else if (tabName === 'reminders') {
+                loadReminders();
+            } else if (tabName === 'ai') {
+                loadSessionsForAgenda();
+            }
+        }
+
+        // Load dashboard
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/progress`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const summary = data.summary;
+                    document.getElementById('stats-container').innerHTML = `
+                        <div class="stat-card">
+                            <h3>${summary.total_sessions}</h3>
+                            <p>Total Sessions</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>${summary.completed_sessions}</h3>
+                            <p>Completed</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>${summary.in_progress_sessions}</h3>
+                            <p>In Progress</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>${summary.completion_rate}%</h3>
+                            <p>Completion Rate</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>${summary.total_documents}</h3>
+                            <p>Documents</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>${summary.attendance_rate}%</h3>
+                            <p>Attendance Rate</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showAlert('stats-container', 'Error loading dashboard data', 'error');
+            }
+        }
+
+        // Load sessions
+        async function loadSessions() {
+            try {
+                const response = await fetch(`${API_BASE}/sessions`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const sessions = data.sessions;
+                    if (sessions.length === 0) {
+                        document.getElementById('sessions-container').innerHTML = '<p style="text-align: center; color: #6c757d;">No sessions found. Create your first session!</p>';
+                        return;
+                    }
+
+                    const sessionsHTML = sessions.map(session => `
+                        <div class="session-card">
+                            <div class="session-header">
+                                <div class="session-title">${session.title}</div>
+                                <div class="session-status status-${session.status.toLowerCase().replace(' ', '-')}">${session.status}</div>
+                            </div>
+                            <div class="session-info">
+                                <div class="info-item">
+                                    <span class="info-label">Trainer:</span>
+                                    <span>${session.trainer}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Date:</span>
+                                    <span>${new Date(session.scheduled_date).toLocaleString()}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Duration:</span>
+                                    <span>${session.duration_hours} hours</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Priority:</span>
+                                    <span>${session.priority}</span>
+                                </div>
+                            </div>
+                            ${session.topics && session.topics.length > 0 ? `
+                                <div class="topics-list">
+                                    ${session.topics.map(topic => `<span class="topic-tag">${topic}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                            ${session.participants && session.participants.length > 0 ? `
+                                <div class="participants-list">
+                                    ${session.participants.map(p => `<span class="participant-tag">${p}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                            <div class="session-actions">
+                                <button class="btn btn-primary" onclick="viewSession('${session.session_id}')">View Details</button>
+                                <button class="btn btn-success" onclick="generateAgendaForSession('${session.session_id}')">Generate Agenda</button>
+                                <button class="btn btn-danger" onclick="deleteSession('${session.session_id}')">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    document.getElementById('sessions-container').innerHTML = `<div class="sessions-grid">${sessionsHTML}</div>`;
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+                showAlert('sessions-container', 'Error loading sessions', 'error');
+            }
+        }
+
+        // View session details
+        async function viewSession(sessionId) {
+            try {
+                const response = await fetch(`${API_BASE}/sessions/${sessionId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const session = data.session;
+                    document.getElementById('modal-body').innerHTML = `
+                        <div style="line-height: 1.8;">
+                            <p><strong>Session ID:</strong> ${session.session_id}</p>
+                            <p><strong>Title:</strong> ${session.title}</p>
+                            <p><strong>Description:</strong> ${session.description || 'N/A'}</p>
+                            <p><strong>Trainer:</strong> ${session.trainer}</p>
+                            <p><strong>Trainee:</strong> ${session.trainee || 'N/A'}</p>
+                            <p><strong>Scheduled:</strong> ${new Date(session.scheduled_date).toLocaleString()}</p>
+                            <p><strong>Duration:</strong> ${session.duration_hours} hours</p>
+                            <p><strong>Status:</strong> ${session.status}</p>
+                            <p><strong>Priority:</strong> ${session.priority}</p>
+                            <p><strong>Completion:</strong> ${session.completion_percentage}%</p>
+                            ${session.topics && session.topics.length > 0 ? `
+                                <p><strong>Topics:</strong></p>
+                                <ul>${session.topics.map(t => `<li>${t}</li>`).join('')}</ul>
+                            ` : ''}
+                            ${session.participants && session.participants.length > 0 ? `
+                                <p><strong>Participants:</strong> ${session.participants.join(', ')}</p>
+                            ` : ''}
+                            ${session.documents && session.documents.length > 0 ? `
+                                <p><strong>Documents:</strong></p>
+                                <ul>${session.documents.map(d => `<li><a href="${d.url}" target="_blank">${d.name}</a></li>`).join('')}</ul>
+                            ` : ''}
+                        </div>
+                    `;
+                    document.getElementById('session-modal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error loading session:', error);
+                alert('Error loading session details');
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('session-modal').classList.remove('active');
+        }
+
+        // Delete session
+        async function deleteSession(sessionId) {
+            if (!confirm('Are you sure you want to delete this session?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Session deleted successfully');
+                    loadSessions();
+                } else {
+                    alert('Error deleting session: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error deleting session:', error);
+                alert('Error deleting session');
+            }
+        }
+
+        // Create session form
+        document.getElementById('create-session-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                trainer: document.getElementById('trainer').value,
+                trainee: document.getElementById('trainee').value,
+                scheduled_date: document.getElementById('scheduled_date').value,
+                duration_hours: parseFloat(document.getElementById('duration_hours').value),
+                priority: document.getElementById('priority').value,
+                time_preference: document.getElementById('time_preference').value,
+                topics: document.getElementById('topics').value.split(',').map(t => t.trim()).filter(t => t),
+                participants: document.getElementById('participants').value.split(',').map(p => p.trim()).filter(p => p)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/sessions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('create-alert', 'Session created successfully!', 'success');
+                    document.getElementById('create-session-form').reset();
+                    setTimeout(() => {
+                        switchTab('sessions');
+                        loadSessions();
+                    }, 1500);
+                } else {
+                    showAlert('create-alert', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error creating session:', error);
+                showAlert('create-alert', 'Error creating session', 'error');
+            }
+        });
+
+        // Schedule form
+        document.getElementById('schedule-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const topics = document.getElementById('schedule_topics').value.split('\n').map(t => t.trim()).filter(t => t);
+            const formData = {
+                topics: topics,
+                trainer: document.getElementById('schedule_trainer').value,
+                participants: document.getElementById('schedule_participants').value.split(',').map(p => p.trim()).filter(p => p),
+                start_date: document.getElementById('schedule_start_date').value,
+                end_date: document.getElementById('schedule_end_date').value,
+                duration_hours: parseFloat(document.getElementById('schedule_duration').value),
+                time_preference: document.getElementById('schedule_time').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/schedule`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('schedule-alert', `${data.sessions.length} sessions scheduled successfully!`, 'success');
+                    document.getElementById('schedule-form').reset();
+                    setTimeout(() => {
+                        switchTab('sessions');
+                        loadSessions();
+                    }, 1500);
+                } else {
+                    showAlert('schedule-alert', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error scheduling sessions:', error);
+                showAlert('schedule-alert', 'Error scheduling sessions', 'error');
+            }
+        });
+
+        // Load reminders
+        async function loadReminders() {
+            try {
+                const response = await fetch(`${API_BASE}/reminders`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const reminders = data.reminders;
+                    if (reminders.length === 0) {
+                        document.getElementById('reminders-container').innerHTML = '<p style="text-align: center; color: #6c757d;">No pending reminders</p>';
+                        return;
+                    }
+
+                    const remindersHTML = reminders.map(reminder => `
+                        <div class="session-card">
+                            <h3>${reminder.session_title}</h3>
+                            <p><strong>Type:</strong> ${reminder.reminder_type.replace('_', ' ')}</p>
+                            <p><strong>Scheduled:</strong> ${new Date(reminder.scheduled_date).toLocaleString()}</p>
+                            <p>${reminder.message}</p>
+                        </div>
+                    `).join('');
+
+                    document.getElementById('reminders-container').innerHTML = remindersHTML;
+                }
+            } catch (error) {
+                console.error('Error loading reminders:', error);
+                showAlert('reminders-container', 'Error loading reminders', 'error');
+            }
+        }
+
+        // Topic breakdown
+        document.getElementById('breakdown-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const topic = document.getElementById('breakdown_topic').value;
+            const count = parseInt(document.getElementById('breakdown_count').value);
+
+            try {
+                const response = await fetch(`${API_BASE}/ai/breakdown`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, num_sessions: count })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const subtopics = data.subtopics;
+                    const html = `
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <h4>Suggested Subtopics:</h4>
+                            <ol style="margin-top: 15px;">
+                                ${subtopics.map(st => `<li style="margin-bottom: 10px;">${st}</li>`).join('')}
+                            </ol>
+                        </div>
+                    `;
+                    document.getElementById('breakdown-result').innerHTML = html;
+                } else {
+                    showAlert('breakdown-alert', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error breaking down topic:', error);
+                showAlert('breakdown-alert', 'Error breaking down topic', 'error');
+            }
+        });
+
+        // Load sessions for agenda dropdown
+        async function loadSessionsForAgenda() {
+            try {
+                const response = await fetch(`${API_BASE}/sessions`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const select = document.getElementById('agenda_session');
+                    select.innerHTML = '<option value="">-- Select a session --</option>' +
+                        data.sessions.map(s => `<option value="${s.session_id}">${s.title}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+            }
+        }
+
+        // Generate agenda
+        document.getElementById('agenda-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const sessionId = document.getElementById('agenda_session').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/ai/agenda`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: sessionId })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const html = `
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <pre style="white-space: pre-wrap; font-family: monospace;">${data.agenda}</pre>
+                        </div>
+                    `;
+                    document.getElementById('agenda-result').innerHTML = html;
+                } else {
+                    showAlert('agenda-alert', 'Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error generating agenda:', error);
+                showAlert('agenda-alert', 'Error generating agenda', 'error');
+            }
+        });
+
+        // Generate agenda for specific session
+        async function generateAgendaForSession(sessionId) {
+            try {
+                const response = await fetch(`${API_BASE}/ai/agenda`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: sessionId })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('modal-body').innerHTML = `
+                        <pre style="white-space: pre-wrap; font-family: monospace; line-height: 1.6;">${data.agenda}</pre>
+                    `;
+                    document.getElementById('session-modal').classList.add('active');
+                } else {
+                    alert('Error generating agenda: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error generating agenda:', error);
+                alert('Error generating agenda');
+            }
+        }
+
+        // Show alert
+        function showAlert(containerId, message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            const html = `<div class="alert ${alertClass}">${message}</div>`;
+            document.getElementById(containerId).innerHTML = html;
+            setTimeout(() => {
+                document.getElementById(containerId).innerHTML = '';
+            }, 5000);
+        }
+
+        // Initialize
+        loadDashboard();
+    </script>
+</body>
+</html>
